@@ -8,10 +8,11 @@ class User {
   String city = '';
   String website = '';
   String company = '';
+  String catchPhrase = '';
 
   //constructor
   User(this.id, this.name, this.username, this.email, this.city, this.website,
-      this.company);
+      this.company, this.catchPhrase);
 
   //Map<String, dynamic> means we are declaring a Map object
   // with keys that are strings and the values that are dynamic
@@ -26,6 +27,7 @@ class User {
     city = userMap['address']['city'] ?? '';
     website = userMap['website'] ?? '';
     company = userMap['company']['name'] ?? '';
+    catchPhrase = userMap['company']['catchPhrase'] ?? '';
     // get rid of the `this` - https://dart-lang.github.io/linter/lints/unnecessary_this.html
   }
 }

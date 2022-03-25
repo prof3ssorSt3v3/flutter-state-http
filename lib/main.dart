@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async'; //for Future
+import 'dart:math'; //for Random
 import './data/http_helper.dart'; //our fetch call here
 import './data/user.dart'; // User type to hold properties we want
 
@@ -39,6 +40,13 @@ class _MainPageState extends State<MainPage> {
     getData();
   }
 
+  List<Color> colours = [
+    Colors.amber,
+    Colors.lightBlue,
+    Colors.lightGreen,
+    Colors.purple,
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,11 +84,15 @@ class _MainPageState extends State<MainPage> {
                       //gets called once per item in your List
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: Colors.amber,
-                          child: Text('A'),
+                          backgroundColor:
+                              colours[Random().nextInt(colours.length)],
+                          child: Icon(
+                            Icons.account_circle,
+                            color: Colors.white,
+                          ),
                         ),
                         title: Text('${users[index].name}'),
-                        subtitle: Text(users[index].email),
+                        subtitle: Text(users[index].catchPhrase),
                       );
                     },
                   )

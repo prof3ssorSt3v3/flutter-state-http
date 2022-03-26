@@ -4,6 +4,7 @@ import './user.dart';
 
 // https://jsonplaceholder.typicode.com/users
 
+//have one HttpHelper type class per API
 class HttpHelper {
   final String domain = 'jsonplaceholder.typicode.com';
 
@@ -42,7 +43,8 @@ class HttpHelper {
 
     http.Response response = await makeRequest('get', uri, null, null);
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
+      //a get request should respond with a 200 status
       List<dynamic> data = jsonDecode(response.body);
       //our data is a list filled with objects
       //we want each of those objects to become a User object
@@ -91,6 +93,7 @@ class HttpHelper {
         await makeRequest('post', uri, headers, jsonEncode(newuser));
 
     if (response.statusCode == 201) {
+      //post should get a 201 response status
       //new user created we want the id
       return jsonDecode(response.body);
     } else {

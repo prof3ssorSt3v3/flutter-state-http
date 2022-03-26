@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+//one custom data class per object type
+//they could all be in one file but more commonly in their own
 class User {
   int id = 0;
   String name = '';

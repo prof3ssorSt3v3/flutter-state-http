@@ -32,12 +32,24 @@ class _MainPageState extends State<MainPage> {
   //entries will be populated with API data
   final List<String> stuff = <String>['one text', 'two text', 'three text'];
   late List<User> users = <User>[];
+  //put a Future with an empty <user> list into future user as initial data
+  Future<List<User>> futureUsers = Future(() => <User>[]);
 
   @override
   void initState() {
     super.initState();
-    //go get the user data
-    getData();
+    //go get the user data right away
+    getData(); // at the bottom of main.dart
+
+    //Repeat with the fetch for the FutureBuilder
+    HttpHelper helper = HttpHelper();
+    //do a delay so we see the circular spinner
+    Future<void>.delayed(Duration(seconds: 5), () {
+      setState(() {
+        futureUsers = helper.getUsers();
+        print('Got ${users.length} FutureBuilder users.');
+      });
+    });
   }
 
   List<Color> colours = [
@@ -58,18 +70,47 @@ class _MainPageState extends State<MainPage> {
         children: [
           Expanded(
             flex: 1,
-            child: ListView.builder(
-              padding: EdgeInsets.all(16.0),
-              itemCount: stuff.length,
-              itemBuilder: (BuildContext context, int index) {
-                //gets called once per item in your List
-                return ListTile(
-                  title: Text(stuff[index]),
-                );
+            //Using a FutureBuilder before
+            child: FutureBuilder<List<User>>(
+              future: futureUsers, //the future we defined as a STATE variable
+              builder: (context, snapshot) {
+                if (snapshot.data!.length > 0) {
+                  if (snapshot.hasData) {
+                    // snapshot.hasData will be true as long as snapshot.data is not null
+                    //snapshot.connectionState == ConnectionState.done
+                    //build your interface now using snapshot.data
+                    List<User> users = snapshot.data ?? [];
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        //gets called once per item in your List
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor:
+                                colours[Random().nextInt(colours.length)],
+                            child: const Icon(
+                              Icons.account_circle,
+                              color: Colors.white,
+                            ),
+                          ),
+                          title: Text(users[index].name),
+                          subtitle: Text(users[index].catchPhrase),
+                        );
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('${snapshot.error}');
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
               },
             ),
           ),
-          Divider(
+          const Divider(
             color: Colors.black38,
           ),
           Expanded(
@@ -86,12 +127,12 @@ class _MainPageState extends State<MainPage> {
                         leading: CircleAvatar(
                           backgroundColor:
                               colours[Random().nextInt(colours.length)],
-                          child: Icon(
+                          child: const Icon(
                             Icons.account_circle,
                             color: Colors.white,
                           ),
                         ),
-                        title: Text('${users[index].name}'),
+                        title: Text(users[index].name),
                         subtitle: Text(users[index].catchPhrase),
                       );
                     },
@@ -109,10 +150,12 @@ class _MainPageState extends State<MainPage> {
   Future getData() async {
     print('Getting data.');
     HttpHelper helper = HttpHelper();
+    //In this version we use await... to wait for the response from getUsers
+    // getUsers is an async function
     List<User> result = await helper.getUsers();
     setState(() {
       users = result;
-      print('Got ${users.length} users.');
+      print('Got ${users.length} ListView.builder users.');
     });
   }
 

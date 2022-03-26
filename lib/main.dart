@@ -74,7 +74,7 @@ class _MainPageState extends State<MainPage> {
             child: FutureBuilder<List<User>>(
               future: futureUsers, //the future we defined as a STATE variable
               builder: (context, snapshot) {
-                if (snapshot.data!.length > 0) {
+                if (snapshot.data!.isNotEmpty) {
                   if (snapshot.hasData) {
                     // snapshot.hasData will be true as long as snapshot.data is not null
                     //snapshot.connectionState == ConnectionState.done
@@ -148,14 +148,19 @@ class _MainPageState extends State<MainPage> {
 
   //function to fetch data
   Future getData() async {
+    //async needed here if we are NOT doing that delay
     print('Getting data.');
     HttpHelper helper = HttpHelper();
     //In this version we use await... to wait for the response from getUsers
     // getUsers is an async function
-    List<User> result = await helper.getUsers();
-    setState(() {
-      users = result;
-      print('Got ${users.length} ListView.builder users.');
+    //do a 3 second delay before fetching the data
+    Future.delayed(Duration(seconds: 3), () async {
+      //this function is async so we can use await
+      List<User> result = await helper.getUsers();
+      setState(() {
+        users = result;
+        print('Got ${users.length} ListView.builder users.');
+      });
     });
   }
 

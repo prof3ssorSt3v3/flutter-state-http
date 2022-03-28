@@ -74,39 +74,39 @@ class _MainPageState extends State<MainPage> {
             child: FutureBuilder<List<User>>(
               future: futureUsers, //the future we defined as a STATE variable
               builder: (context, snapshot) {
-                if (snapshot.data!.isNotEmpty) {
-                  if (snapshot.hasData) {
-                    // snapshot.hasData will be true as long as snapshot.data is not null
-                    //snapshot.connectionState == ConnectionState.done
-                    //build your interface now using snapshot.data
-                    List<User> users = snapshot.data ?? [];
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(8),
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        //gets called once per item in your List
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor:
-                                colours[Random().nextInt(colours.length)],
-                            child: const Icon(
-                              Icons.account_circle,
-                              color: Colors.white,
-                            ),
+                // if (snapshot.data!.isNotEmpty) {
+                if (snapshot.hasData) {
+                  // snapshot.hasData will be true as long as snapshot.data is not null
+                  //snapshot.connectionState == ConnectionState.done
+                  //build your interface now using snapshot.data
+                  List<User> users = snapshot.data ?? [];
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      //gets called once per item in your List
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor:
+                              colours[Random().nextInt(colours.length)],
+                          child: const Icon(
+                            Icons.account_circle,
+                            color: Colors.white,
                           ),
-                          title: Text(users[index].name),
-                          subtitle: Text(users[index].catchPhrase),
-                        );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('${snapshot.error}');
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                        ),
+                        title: Text(users[index].name),
+                        subtitle: Text(users[index].catchPhrase),
+                      );
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
                 } else {
                   return const Center(child: CircularProgressIndicator());
                 }
+                // } else {
+                //   return const Center(child: CircularProgressIndicator());
+                // }
               },
             ),
           ),
@@ -154,7 +154,7 @@ class _MainPageState extends State<MainPage> {
     //In this version we use await... to wait for the response from getUsers
     // getUsers is an async function
     //do a 3 second delay before fetching the data
-    Future.delayed(Duration(seconds: 3), () async {
+    Future.delayed(Duration(seconds: 10), () async {
       //this function is async so we can use await
       List<User> result = await helper.getUsers();
       setState(() {

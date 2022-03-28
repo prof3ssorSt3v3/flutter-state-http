@@ -53,6 +53,13 @@ class HttpHelper {
         return user;
       }).toList();
       return users;
+
+      //Js     myArray.map(func)  //returns a new Array
+      //Dart   myList.map( func ).toList()  //return a new List
+
+      //Js     myArray.filter(func)  //returns a new filtered Array
+      //Dart   myList.where( func).toList()  //return a new List
+
     } else {
       throw Exception('Unable to fetch list of users');
     }
